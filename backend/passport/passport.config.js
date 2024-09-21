@@ -15,7 +15,7 @@ export const configurePassport = async () => {
       const user = await User.findById(id) // find user by id in database
       done(null, user)
     } catch (err) {
-      done(err, null)
+      done(err)
     }
   }) // deserialize user from session
 
@@ -34,7 +34,7 @@ export const configurePassport = async () => {
 
         return done(null, user)
       } catch (err) {
-        return done(err, null)
+        return done(err)
       }
     })
   )

@@ -38,9 +38,9 @@ const userResolver = {
           throw new Error('User already exists')
         }
 
-        const salt = bcrypt.genSalt(10) // generate salt for password hashing with 10 rounds of salt generation (recommended)
+        const salt = await bcrypt.genSalt(10) // generate salt for password hashing with 10 rounds of salt generation (recommended)
 
-        const hashedPassword = bcrypt.hash(password, salt) // hash password with salt generated above
+        const hashedPassword = await bcrypt.hash(password, salt) // hash password with salt generated above
 
         // https://avatar-placeholder.iran.liara.run/
         const maleProfilePic = `https://avatar-placeholder.iran.liara.run/public/boy?username=${username}`
@@ -54,8 +54,10 @@ const userResolver = {
           profilePicture: gender === 'male' ? maleProfilePic : femaleProfilePic
         })
 
+        console.log(newUser)
+
         await newUser.save() // save user to database
-        await context.login() // login user after signup
+        await context.login(newUser) // login user after signup
         return newUser
       } catch (err) {
         console.error('Error in signUp: ', err)
@@ -66,6 +68,8 @@ const userResolver = {
     login: async (_, { input }, context) => {
       try {
         const { username, password } = input
+
+        if (!username || !password) throw new Error('All fields are required')
 
         const { user } = await context.authenticate('graphql-local', {
           username,
@@ -82,10 +86,10 @@ const userResolver = {
     logout: async (_, __, context) => {
       try {
         await context.logout()
-        req.session.destroy(err => {
+        context.req.session.destroy(err => {
           if (err) throw err
         })
-        res.clearCookie('connect.sid')
+        context.res.clearCookie('connect.sid')
         return { message: 'Logged out successfully' }
       } catch (err) {
         console.error('Error in logout: ', err)
