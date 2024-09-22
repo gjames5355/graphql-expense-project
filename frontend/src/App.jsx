@@ -14,8 +14,6 @@ import { useQuery } from '@apollo/client'
 function App () {
   const { loading, error, data } = useQuery(GET_AUTHENTICATED_USER)
 
-  console.log('Authenticated user:', data)
-
   return (
     <>
       {data?.authUser && <Header />}

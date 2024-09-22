@@ -16,11 +16,11 @@ const transactionResolver = {
     },
     transaction: async (_, { transactionId }) => {
       try {
-        const transaction = await Transaction.findById(transaction)
+        const transaction = await Transaction.findById(transactionId)
         return transaction
       } catch (err) {
-        console.error('Error fetching transaction:', err)
-        throw new Error('Error fetching transaction')
+        console.error('Error getting transaction:', err)
+        throw new Error('Error getting transaction')
       }
     }
     // TODO => ADD categoryStatistics query
