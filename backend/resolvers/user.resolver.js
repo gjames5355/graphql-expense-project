@@ -1,3 +1,4 @@
+import Transaction from '../models/transaction.model.js'
 import User from '../models/user.model.js'
 import bcrypt from 'bcryptjs'
 
@@ -21,7 +22,18 @@ const userResolver = {
         throw new Error(err.message || 'Error getting user')
       }
     }
-    // TODO => ADD USER/TRANSACTION RELATED QUERIES HERE
+  },
+  User: {
+    transactions: async parent => {
+      try {
+        const transactions = await Transaction.find({ userId: parent._id })
+        return transactions
+        console.log('transactions: ', transactions)
+      } catch (err) {
+        console.error('Error in User.transactions resolver: ', err)
+        throw new Error(err.message || 'Error getting user transactions')
+      }
+    }
   },
   Mutation: {
     signUp: async (_, { input }, context) => {
@@ -43,8 +55,8 @@ const userResolver = {
         const hashedPassword = await bcrypt.hash(password, salt) // hash password with salt generated above
 
         // https://avatar-placeholder.iran.liara.run/
-        const maleProfilePic = `https://avatar-placeholder.iran.liara.run/public/boy?username=${username}`
-        const femaleProfilePic = `https://avatar-placeholder.iran.liara.run/public/girl?username=${username}`
+        const maleProfilePic = `https://avatar.iran.liara.run/public/boy?username=${username}`
+        const femaleProfilePic = `https://avatar.iran.liara.run/public/girl?username=${username}`
 
         const newUser = new User({
           username,
