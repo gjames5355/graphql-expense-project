@@ -12,11 +12,14 @@ import http from 'http'
 import mergedResolvers from './resolvers/index.js'
 import mergedTypeDefs from './typeDefs/index.js'
 import passport from 'passport'
+import path from 'path'
 import session from 'express-session'
 
 dotenv.config()
 
 configurePassport()
+
+const __dirname = path.resolve()
 
 const app = express()
 
@@ -72,6 +75,13 @@ app.use(
     context: async ({ req, res }) => buildContext({ req, res }) // buildContext is a function that returns an object with the request and response objects
   })
 )
+
+// npm run build will build your frontend app, and it will be the optimized version of your app that will be served
+app.use(express.static(path.join(__dirname, 'frontend/dist')))
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend/dist', 'index.html'))
+})
 
 // Modified server startup
 await new Promise(resolve => httpServer.listen({ port: 4000 }, resolve))

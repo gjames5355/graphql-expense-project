@@ -10,7 +10,10 @@ import { createRoot } from 'react-dom/client'
 
 const client = new ApolloClient({
   // TODO => Update production uri
-  uri: 'http://localhost:4000/graphql', // the endpoint for the GraphQL server
+  uri:
+    import.meta.VITE_NODE_ENV === 'development'
+      ? 'http://localhost:4000/graphql'
+      : '/graphql', // the endpoint for the GraphQL server
   cache: new InMemoryCache(), // cache for caching data on the client side
   credentials: 'include' // send cookies with every request
 })
